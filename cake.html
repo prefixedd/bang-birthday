@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time to Celebrate, Bang! 🎂</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: radial-gradient(circle at 50% 40%, #2a1040 0%, #110924 70%, #080810 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* ── BACK BUTTON ── */
+        .back-btn {
+            position: fixed;
+            top: 22px;
+            left: 22px;
+            background: rgba(255,255,255,.08);
+            border: 1.5px solid rgba(255,255,255,.18);
+            color: #fff;
+            padding: 8px 20px 8px 14px;
+            border-radius: 50px;
+            font-family: 'Nunito', sans-serif;
+            font-size: .9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(6px);
+            transition: background .3s, transform .3s;
+            z-index: 100;
+            opacity: 0;
+            animation: fadeInDown .6s 0.3s forwards;
+        }
+        .back-btn:hover { background: rgba(255,255,255,.16); transform: translateX(-3px); }
+        @keyframes fadeInDown {
+            from { opacity:0; transform: translateY(-12px); }
+            to   { opacity:1; transform: translateY(0); }
+        }
+
+        /* ── TITLE ── */
+        .page-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.6rem, 5vw, 2.4rem);
+            color: #ffc8e0;
+            margin-bottom: 10px;
+            opacity: 0;
+            animation: fadeInDown .7s .5s forwards;
+            text-shadow: 0 0 20px rgba(255,150,180,.4);
+            letter-spacing: 1px;
+        }
+
+        /* ── MAIN SCENE ── */
+        .container {
+            position: relative;
+            width: 420px;
+            height: 420px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ── TRIGGER BUTTON ── */
+        .trigger-btn {
+            padding: 16px 38px;
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: #fff;
+            background: linear-gradient(135deg, #ff758f, #ff4d8d);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 28px rgba(255,100,140,.45), 0 0 0 0 rgba(255,100,140,.4);
+            font-family: 'Nunito', sans-serif;
+            letter-spacing: .5px;
+            animation: pulseShadow 2s infinite;
+            position: relative;
+            z-index: 10;
+        }
+        @keyframes pulseShadow {
+            0%,100% { box-shadow: 0 8px 28px rgba(255,100,140,.45), 0 0 0 0 rgba(255,100,140,.3); }
+            50%      { box-shadow: 0 8px 28px rgba(255,100,140,.45), 0 0 0 14px rgba(255,100,140,0); }
+        }
+        .trigger-btn:hover { transform: translateY(-3px) scale(1.06); filter: brightness(1.1); }
+
+        /* ── STAR SPARKLES ── */
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0;
+            font-size: 1.2rem;
+        }
+
+        /* ── CAKE WRAPPER ── */
+        .cake-wrapper {
+            position: absolute;
+            bottom: 20px;
+            opacity: 0;
+            transform: scale(0) translateY(60px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        /* ── CANDLES ── */
+        .candles {
+            display: flex;
+            gap: 22px;
+            margin-bottom: -8px;
+            z-index: 3;
+        }
+        .candle {
+            width: 13px;
+            height: 60px;
+            background: repeating-linear-gradient(45deg, #7bdff2, #7bdff2 8px, #b5e2fa 8px, #b5e2fa 16px);
+            border-radius: 6px 6px 0 0;
+            position: relative;
+        }
+        .candle:nth-child(2) {
+            background: repeating-linear-gradient(45deg, #ffcbf2, #ffcbf2 8px, #f3c6f1 8px, #f3c6f1 16px);
+            height: 72px;
+            top: -12px;
+        }
+        .flame {
+            width: 15px;
+            height: 24px;
+            background: radial-gradient(ellipse at bottom, #ffee32 25%, #ff9100 85%);
+            border-radius: 50% 50% 35% 35%;
+            position: absolute;
+            top: -26px;
+            left: -1px;
+            box-shadow: 0 0 12px #ff9100, 0 0 26px #ffee32, 0 0 40px rgba(255,145,0,.3);
+            animation: floatFlame .65s infinite alternate ease-in-out;
+            transform-origin: bottom center;
+        }
+        @keyframes floatFlame {
+            0%   { transform: scaleX(.94) rotate(-3deg); }
+            100% { transform: scaleX(1.06) rotate(4deg) translateY(-2px); }
+        }
+
+        /* ── GLOW HALO behind cake from candles ── */
+        .candle-glow {
+            position: absolute;
+            top: -30px;
+            width: 160px;
+            height: 80px;
+            background: radial-gradient(ellipse, rgba(255,220,80,.18) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* ── CAKE LAYERS ── */
+        .cake-layers {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            position: relative;
+        }
+
+        /* Top tier */
+        .tier-top {
+            width: 160px;
+            height: 70px;
+            background: linear-gradient(160deg, #ffb3c6 0%, #ff8fab 100%);
+            border-radius: 18px 18px 10px 10px;
+            border: 4px solid #fff;
+            position: relative;
+            box-shadow: 0 8px 24px rgba(0,0,0,.35), inset 0 -6px 0 rgba(0,0,0,.06);
+            overflow: hidden;
+        }
+        /* Bottom tier */
+        .tier-bottom {
+            width: 260px;
+            height: 100px;
+            background: linear-gradient(160deg, #ffc8d8 0%, #ffadc6 100%);
+            border-radius: 14px 14px 22px 22px;
+            border: 4px solid #fff;
+            position: relative;
+            box-shadow: 0 12px 32px rgba(0,0,0,.4), inset 0 -8px 0 rgba(0,0,0,.06);
+            overflow: hidden;
+            margin-top: -4px;
+        }
+
+        /* Frosting drips */
+        .frosting {
+            position: absolute;
+            top: -2px; left: -2px; right: -2px;
+            height: 40px;
+            background: #fff;
+            border-radius: 10px 10px 0 0;
+        }
+        .drip {
+            position: absolute;
+            background: #fff;
+            border-radius: 0 0 50% 50%;
+            top: 28px;
+        }
+        /* top tier drips */
+        .tier-top .drip { width: 28px; height: 22px; }
+        .tier-top .d1 { left: 8px; height: 30px; }
+        .tier-top .d2 { left: 48px; height: 26px; }
+        .tier-top .d3 { left: 90px; height: 34px; }
+        .tier-top .d4 { left: 128px; height: 20px; }
+        /* bottom tier drips */
+        .tier-bottom .drip { width: 34px; height: 28px; }
+        .tier-bottom .d1 { left: 6px;  height: 38px; }
+        .tier-bottom .d2 { left: 46px; height: 28px; }
+        .tier-bottom .d3 { left: 90px; height: 44px; }
+        .tier-bottom .d4 { left: 136px; height: 30px; }
+        .tier-bottom .d5 { left: 178px; height: 40px; }
+        .tier-bottom .d6 { left: 220px; height: 26px; }
+
+        /* Sprinkles */
+        .sprinkle {
+            position: absolute;
+            width: 9px; height: 5px;
+            border-radius: 3px;
+        }
+        /* top tier */
+        .tier-top .sp1 { background: #7bdff2; top: 16px; left: 20px;  transform: rotate(20deg); }
+        .tier-top .sp2 { background: #ffee32; top: 12px; left: 70px;  transform: rotate(-15deg); }
+        .tier-top .sp3 { background: #c77dff; top: 18px; left: 118px; transform: rotate(35deg); }
+        /* bottom tier */
+        .tier-bottom .sp1 { background: #ff758f; top: 14px; left: 25px;  transform: rotate(20deg); }
+        .tier-bottom .sp2 { background: #7bdff2; top: 18px; left: 75px;  transform: rotate(-25deg); }
+        .tier-bottom .sp3 { background: #ffee32; top: 12px; left: 135px; transform: rotate(40deg); }
+        .tier-bottom .sp4 { background: #c77dff; top: 18px; left: 200px; transform: rotate(-10deg); }
+        .tier-bottom .sp5 { background: #ff758f; top: 68px; left: 30px;  transform: rotate(50deg); }
+        .tier-bottom .sp6 { background: #7bdff2; top: 72px; left: 210px; transform: rotate(-30deg); }
+
+        /* Kawaii face on bottom tier */
+        .face {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            width: 120px;
+        }
+        .eyes-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0 8px;
+            position: relative;
+        }
+        .eye {
+            width: 18px; height: 18px;
+            background: #2a1b4e;
+            border-radius: 50%;
+            position: relative;
+        }
+        .eye::before {
+            content: '';
+            position: absolute;
+            width: 6px; height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            top: 3px; left: 3px;
+        }
+        .blush {
+            width: 20px; height: 12px;
+            background: rgba(255,80,120,.38);
+            border-radius: 50%;
+            filter: blur(1.5px);
+            position: absolute;
+            top: 10px;
+        }
+        .blush-l { left: -4px; }
+        .blush-r { right: -4px; }
+        .smile {
+            width: 24px; height: 14px;
+            border-bottom: 4px solid #2a1b4e;
+            border-radius: 0 0 50% 50%;
+        }
+
+        /* ── SHADOW ── */
+        .shadow-glow {
+            width: 240px; height: 18px;
+            background: rgba(255,100,150,.15);
+            border-radius: 50%;
+            filter: blur(8px);
+            margin-top: 12px;
+        }
+
+        /* ── CONFETTI canvas ── */
+        #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+        /* ── WISH TEXT ── */
+        .wish-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.1rem, 3vw, 1.5rem);
+            color: #ffd6ea;
+            margin-top: 18px;
+            opacity: 0;
+            text-align: center;
+            text-shadow: 0 0 16px rgba(255,150,180,.5);
+            letter-spacing: .5px;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<button class="back-btn" onclick="window.location.href='index.html'">
+    ← Back
+</button>
+
+<p class="page-title">A little surprise for you, Bang 🎂</p>
+
+<div class="container" id="scene">
+    <button class="trigger-btn" id="btn">Let's Celebrate! 🎉</button>
+
+    <div class="cake-wrapper" id="cakeWrapper">
+        <div class="candle-glow"></div>
+        <div class="candles">
+            <div class="candle"><div class="flame"></div></div>
+            <div class="candle"><div class="flame"></div></div>
+            <div class="candle"><div class="flame"></div></div>
+        </div>
+        <div class="cake-layers">
+            <!-- Top tier -->
+            <div class="tier-top" id="tierTop">
+                <div class="frosting">
+                    <div class="drip d1"></div>
+                    <div class="drip d2"></div>
+                    <div class="drip d3"></div>
+                    <div class="drip d4"></div>
+                </div>
+                <div class="sprinkle sp1"></div>
+                <div class="sprinkle sp2"></div>
+                <div class="sprinkle sp3"></div>
+            </div>
+            <!-- Bottom tier -->
+            <div class="tier-bottom" id="tierBottom">
+                <div class="frosting">
+                    <div class="drip d1"></div>
+                    <div class="drip d2"></div>
+                    <div class="drip d3"></div>
+                    <div class="drip d4"></div>
+                    <div class="drip d5"></div>
+                    <div class="drip d6"></div>
+                </div>
+                <div class="sprinkle sp1"></div>
+                <div class="sprinkle sp2"></div>
+                <div class="sprinkle sp3"></div>
+                <div class="sprinkle sp4"></div>
+                <div class="sprinkle sp5"></div>
+                <div class="sprinkle sp6"></div>
+                <div class="face">
+                    <div class="eyes-row">
+                        <div class="blush blush-l"></div>
+                        <div class="eye"></div>
+                        <div class="eye"></div>
+                        <div class="blush blush-r"></div>
+                    </div>
+                    <div class="smile"></div>
+                </div>
+            </div>
+        </div>
+        <div class="shadow-glow"></div>
+    </div>
+</div>
+
+<p class="wish-text" id="wishText">Make a wish, Bang! 🌟</p>
+
+<script>
+// ── CONFETTI ──
+const canvas = document.getElementById('confetti');
+const ctx = canvas.getContext('2d');
+canvas.width = innerWidth; canvas.height = innerHeight;
+window.addEventListener('resize', () => { canvas.width = innerWidth; canvas.height = innerHeight; });
+
+let pieces = [];
+const colors = ['#ff758f','#7bdff2','#ffee32','#c77dff','#ff9de2','#b5f5ec','#ffc857'];
+
+function spawnConfetti() {
+    for (let i = 0; i < 120; i++) {
+        pieces.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            w: Math.random() * 10 + 5,
+            h: Math.random() * 5 + 3,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            rot: Math.random() * Math.PI * 2,
+            vx: (Math.random() - .5) * 2,
+            vy: Math.random() * 2.5 + 1,
+            vr: (Math.random() - .5) * .12,
+            alpha: 1
+        });
+    }
+}
+
+function drawConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach((p, i) => {
+        p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+        if (p.y > canvas.height) p.alpha -= .04;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.alpha);
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, p.w, p.h, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    });
+    pieces = pieces.filter(p => p.alpha > 0);
+    requestAnimationFrame(drawConfetti);
+}
+drawConfetti();
+
+// ── SPARKLE BURST on click ──
+function burstSparkles(cx, cy) {
+    const emojis = ['✨','⭐','💫','🌟','🎊','🎈'];
+    for (let i = 0; i < 14; i++) {
+        const el = document.createElement('div');
+        el.className = 'sparkle';
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.left = cx + 'px';
+        el.style.top  = cy + 'px';
+        el.style.fontSize = (Math.random() * .8 + .8) + 'rem';
+        document.getElementById('scene').appendChild(el);
+        gsap.set(el, { x: -10, y: -10, opacity: 1 });
+        gsap.to(el, {
+            x: (Math.random() - .5) * 220,
+            y: (Math.random() - .5) * 220,
+            opacity: 0,
+            scale: Math.random() * 1.2 + .5,
+            duration: Math.random() * .8 + .6,
+            ease: 'power2.out',
+            onComplete: () => el.remove()
+        });
+    }
+}
+
+// ── FLOATING AMBIENT PARTICLES ──
+function createParticles() {
+    const scene = document.getElementById('scene');
+    const emojis = ['✨','💖','🌸','⭐','💫'];
+    for (let i = 0; i < 18; i++) {
+        const el = document.createElement('div');
+        el.className = 'sparkle';
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.fontSize = (Math.random() * .7 + .6) + 'rem';
+        scene.appendChild(el);
+        gsap.set(el, {
+            x: Math.random() * 380 - 190,
+            y: Math.random() * 200 + 50,
+            opacity: 0, scale: 0
+        });
+        gsap.to(el, {
+            y: '-=130',
+            opacity: Math.random() * .6 + .3,
+            scale: 1,
+            duration: Math.random() * 2.5 + 2,
+            delay: Math.random() * 1.5,
+            repeat: -1, yoyo: true,
+            ease: 'sine.inOut'
+        });
+    }
+}
+
+// ── MAIN REVEAL ──
+const btn = document.getElementById('btn');
+
+btn.addEventListener('click', () => {
+    const r = btn.getBoundingClientRect();
+    const scene = document.getElementById('scene');
+    const sr = scene.getBoundingClientRect();
+    burstSparkles(r.left - sr.left + r.width/2, r.top - sr.top + r.height/2);
+
+    // Button fades out softly with a little spin
+    gsap.to(btn, {
+        opacity: 0,
+        scale: .2,
+        rotation: 15,
+        y: -20,
+        duration: .55,
+        ease: 'back.in(1.7)',
+        onComplete: () => {
+            btn.style.display = 'none';
+            revealCake();
+        }
+    });
+});
+
+function revealCake() {
+    spawnConfetti();
+    createParticles();
+
+    const wrapper  = document.getElementById('cakeWrapper');
+    const tierBot  = document.getElementById('tierBottom');
+    const tierTop  = document.getElementById('tierTop');
+    const candles  = document.querySelector('.candles');
+    const wishText = document.getElementById('wishText');
+
+    // Start everything hidden
+    gsap.set([tierBot, tierTop, candles], { opacity: 0, y: 40, scale: .85 });
+    gsap.set(wrapper, { opacity: 1, scale: 1, y: 0 }); // wrapper visible
+
+    // Layer-by-layer entrance 🎂
+    const tl = gsap.timeline();
+
+    // 1. Bottom tier slides up
+    tl.to(tierBot, {
+        opacity: 1, y: 0, scale: 1,
+        duration: .7, ease: 'back.out(1.6)'
+    })
+    // 2. Top tier stacks on
+    .to(tierTop, {
+        opacity: 1, y: 0, scale: 1,
+        duration: .6, ease: 'back.out(1.8)'
+    }, '+=.15')
+    // 3. Candles pop in
+    .to(candles, {
+        opacity: 1, y: 0, scale: 1,
+        duration: .5, ease: 'elastic.out(1.2, .5)'
+    }, '+=.1')
+    // 4. Whole cake bounces gently
+    .to(wrapper, {
+        y: -10, duration: 1.6, repeat: -1, yoyo: true, ease: 'sine.inOut'
+    }, '+=.2')
+
+    // 5. Wish text fades in
+    gsap.to(wishText, {
+        opacity: 1, y: -6,
+        duration: .8, ease: 'power2.out',
+        delay: 1.6
+    });
+
+    // 6. Blink loop
+    setTimeout(startBlink, 2000);
+}
+
+function startBlink() {
+    const tl = gsap.timeline({ repeat: -1, repeatDelay: 3.2 });
+    tl.to('.eye', { scaleY: .05, duration: .1, transformOrigin: 'center center', ease: 'power2.inOut' })
+      .to('.eye', { scaleY: 1,   duration: .1, ease: 'power2.inOut' })
+      .to('.eye', { scaleY: .05, duration: .09, delay: .08, transformOrigin: 'center center', ease: 'power2.inOut' })
+      .to('.eye', { scaleY: 1,   duration: .09, ease: 'power2.inOut' });
+}
+</script>
+</body>
+</html>
