@@ -316,7 +316,12 @@
     </style>
 </head>
 <body>
-
+<iframe id="bgMusic" 
+  src="https://www.youtube.com/embed/zr0k3BulJKE?autoplay=1&loop=1&playlist=zr0k3BulJKE&controls=0&mute=0" 
+  style="display:none;" 
+  allow="autoplay">
+</iframe>
+    
 <canvas id="confetti"></canvas>
 
 <button class="back-btn" onclick="window.location.href='index.html'">
@@ -387,6 +392,11 @@ const canvas = document.getElementById('confetti');
 const ctx = canvas.getContext('2d');
 canvas.width = innerWidth; canvas.height = innerHeight;
 window.addEventListener('resize', () => { canvas.width = innerWidth; canvas.height = innerHeight; });
+
+document.addEventListener('click', function() {
+    var iframe = document.getElementById('bgMusic');
+    iframe.src = iframe.src;
+  }, { once: true });
 
 let pieces = [];
 const colors = ['#ff758f','#7bdff2','#ffee32','#c77dff','#ff9de2','#b5f5ec','#ffc857'];
